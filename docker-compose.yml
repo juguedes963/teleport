@@ -1,0 +1,26 @@
+version: '2'
+services:
+  teleport:
+    image: public.ecr.aws/gravitational/teleport-distroless-debug:15.3.1
+    container_name: teleport
+    hostname: teste
+    ports:
+      - "3023:3023"
+      - "3025:3025"
+      - "3080:3080"
+    volumes:
+      - ./config:/etc/teleport
+      - ./teleport.yaml:/etc/teleport/teleport.yaml 
+      - ./data:/var/lib/teleport
+    networks:
+      - teleport-net
+      
+  ssh_server:
+    build: .
+    ports:
+      - "2222:22"
+    container_name: ssh_server
+
+networks:
+  teleport-net:
+    driver: bridge

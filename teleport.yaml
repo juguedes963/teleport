@@ -1,0 +1,28 @@
+teleport:
+    data_dir: /var/lib/teleport
+    log:
+        output: stderr
+        severity: INFO
+        format:
+            output: text
+    ca_pin: []
+    diag_addr: ""
+auth_service:
+    enabled: "yes"
+    listen_addr: 0.0.0.0:3025
+    tokens:
+        - "proxy,node:rawkode-academy"
+ssh_service:
+    enabled: "yes"
+    labels:
+        env: example
+    commands: 
+        - name: hostname
+          command: [hostname]
+          period: 1m0s
+proxy_service:
+    enabled: "yes"
+    listen_addr: 0.0.0.0:3023
+    public_addr: 192.168.1.108:443
+    https_keypairs: []
+    acme: {}
