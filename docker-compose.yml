@@ -12,6 +12,7 @@ services:
       - ./config:/etc/teleport
       - ./teleport.yaml:/etc/teleport/teleport.yaml 
       - ./data:/var/lib/teleport
+      - ./certbot/www/:/var/www/certbot/:ro
     networks:
       - teleport-net
       
@@ -20,6 +21,12 @@ services:
     ports:
       - "2222:22"
     container_name: ssh_server
+
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
 
 networks:
   teleport-net:
