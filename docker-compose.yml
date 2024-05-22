@@ -9,7 +9,7 @@ services:
     ports:
       - "3023:3023"
       - "3025:3025"
-      - "80:3080"
+      - "3080:3080"
     volumes:
       - ./config:/etc/teleport
       - ./teleport.yaml:/etc/teleport/teleport.yaml 
