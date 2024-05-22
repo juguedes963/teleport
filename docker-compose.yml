@@ -29,7 +29,7 @@ services:
     image: jorgerabello/nginx:reverseproxy
     container_name: nginx
     networks:
-      - nodeappnet
+      - teleport-net
     ports:
       - "8080:80"
     depends_on:
@@ -41,7 +41,9 @@ services:
     volumes:
       - ./nginx/certbot/conf:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
-
+    networks:
+      - teleport-net
+      
 networks:
   teleport-net:
     driver: bridge
