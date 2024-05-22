@@ -4,6 +4,8 @@ services:
     image: public.ecr.aws/gravitational/teleport-distroless-debug:15.3.1
     container_name: teleport
     hostname: teste
+    labels:
+      - traefik.http.routers.teleport.rule=Host(`teleport.beansoftwares.com.br`)
     ports:
       - "3023:3023"
       - "3025:3025"
@@ -12,7 +14,6 @@ services:
       - ./config:/etc/teleport
       - ./teleport.yaml:/etc/teleport/teleport.yaml 
       - ./data:/var/lib/teleport
-      - ./certbot/www/:/var/www/certbot/:ro
     networks:
       - teleport-net
       
@@ -21,29 +22,24 @@ services:
     ports:
       - "2222:22"
     container_name: ssh_server
-
-  nginx:
-    build:
-      context: .
-      dockerfile: Dockerfile.ng
-    image: jorgerabello/nginx:reverseproxy
-    container_name: nginx
-    networks:
-      - teleport-net
+  
+  traefik:
+    image: "traefik:v2.2"
+    container_name: "traefik"
+    restart: always
+    command:
+      - "--log.level=ERROR"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
     ports:
-      - "8080:80"
-    depends_on:
-      - teleport    
-
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
+      - "80:80"
+      - "8080:8080"
     volumes:
-      - ./nginx/certbot/conf:/etc/letsencrypt
-      - ./nginx/certbot/www:/var/www/certbot
-    networks:
-      - teleport-net
-      
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.yml:/etc/traefik/traefik.yml"
+
 networks:
   teleport-net:
     driver: bridge
