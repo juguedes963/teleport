@@ -1,5 +1,15 @@
 version: '2'
 services:
+  webserver:
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./certbot/www/:/var/www/certbot/:ro
+      
   teleport:
     image: public.ecr.aws/gravitational/teleport-distroless-debug:15.3.1
     container_name: teleport

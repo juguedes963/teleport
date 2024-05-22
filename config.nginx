@@ -1,0 +1,15 @@
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name teleport.beansoftwares.com.br www.teleport.beansoftwares.com.br;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://teleport.beansoftwares.com.br$request_uri;
+    }
+}
