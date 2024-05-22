@@ -1,15 +1,5 @@
 version: '2'
 services:
-  webserver:
-    image: nginx:latest
-    ports:
-      - 80:80
-      - 443:443
-    restart: always
-    volumes:
-      - ./nginx/conf/:/etc/nginx/conf.d/:ro
-      - ./certbot/www/:/var/www/certbot/:ro
-      
   teleport:
     image: public.ecr.aws/gravitational/teleport-distroless-debug:15.3.1
     container_name: teleport
@@ -17,7 +7,7 @@ services:
     ports:
       - "3023:3023"
       - "3025:3025"
-      - "3080:3080"
+      - "80:3080"
     volumes:
       - ./config:/etc/teleport
       - ./teleport.yaml:/etc/teleport/teleport.yaml 
@@ -32,11 +22,25 @@ services:
       - "2222:22"
     container_name: ssh_server
 
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.ng
+    image: jorgerabello/nginx:reverseproxy
+    container_name: nginx
+    networks:
+      - nodeappnet
+    ports:
+      - "8080:80"
+    depends_on:
+      - teleport    
+
   certbot:
-    image: certbot/certbot:latest
+    image: certbot/certbot
+    container_name: certbot
     volumes:
-      - ./certbot/www/:/var/www/certbot/:rw
-      - ./certbot/conf/:/etc/letsencrypt/:rw
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
 
 networks:
   teleport-net:
