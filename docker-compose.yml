@@ -5,7 +5,12 @@ services:
     container_name: teleport
     hostname: teste
     labels:
-      - traefik.http.routers.teleport.rule=Host(`teleport.beansoftwares.com.br`)
+      - traefik.enable=true
+      - traefik.port=3080
+      - traefik.http.routers.bean_site.tls=true
+      - traefik.http.routers.bean_site.rule=Host(`teleport.beansoftwares.com.br`)
+      - traefik.http.routers.bean_site.tls.certresolver=lets-encrypt
+      - traefik.http.services.bean_site.loadbalancer.server.port=3080
     ports:
       - "3023:3023"
       - "3025:3025"
@@ -16,6 +21,7 @@ services:
       - ./data:/var/lib/teleport
     networks:
       - teleport-net
+      - traefik-proxy
       
   ssh_server:
     build: .
@@ -23,23 +29,22 @@ services:
       - "2222:22"
     container_name: ssh_server
   
-  traefik:
-    image: "traefik:v2.2"
-    container_name: "traefik"
+ reverse-proxy:
+    build: 
+      context: .
+      dockerfile: Dockerfile.ng
+    container_name: reverse-proxy
     restart: always
-    command:
-      - "--log.level=ERROR"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
     ports:
-      - "80:80"
-      - "8080:8080"
+      - 80:80
+      - 443:443
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./traefik.yml:/etc/traefik/traefik.yml"
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik-proxy
 
 networks:
+  traefik-proxy:
+    name: traefik-proxy
   teleport-net:
     driver: bridge

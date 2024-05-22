@@ -1,0 +1,26 @@
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+    [entryPoints.web.http.redirections.entryPoint]
+      to = "websecure"
+      scheme = "https"
+
+  [entryPoints.websecure]
+    address = ":443"
+
+[api]
+  dashboard = false
+  insecure = false
+
+[certificatesResolvers.lets-encrypt.acme]
+  caServer = "https://acme-v02.api.letsencrypt.org/directory"
+  email = "letsencrypt@beansoftwares.com.br"
+  storage = "acme.json"
+  [certificatesResolvers.lets-encrypt.acme.tlsChallenge]
+
+[providers.docker]
+  watch = true
+  network = "traefik-proxy"
+
+[providers.file]
+  filename = "traefik-dynamic.toml"
