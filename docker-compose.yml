@@ -7,10 +7,10 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=3080
-      - traefik.http.routers.bean_site.tls=true
-      - traefik.http.routers.bean_site.rule=Host(`teleport.beansoftwares.com.br`)
-      - traefik.http.routers.bean_site.tls.certresolver=lets-encrypt
-      - traefik.http.services.bean_site.loadbalancer.server.port=3080
+      - traefik.http.routers.teleport.tls=true
+      - traefik.http.routers.teleport.rule=Host(`teleport.beansoftwares.com.br`)
+      - traefik.http.routers.teleport.tls.certresolver=lets-encrypt
+      - traefik.http.services.teleport.loadbalancer.server.port=3080
     ports:
       - "3023:3023"
       - "3025:3025"
