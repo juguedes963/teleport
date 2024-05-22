@@ -29,7 +29,7 @@ services:
       - "2222:22"
     container_name: ssh_server
   
- reverse-proxy:
+  reverse-proxy:
     build: 
       context: .
       dockerfile: Dockerfile.ng

@@ -1,53 +1,38 @@
 [http.middlewares]
   [http.middlewares.midHeaders.headers]
-    framedeny = true
-    browserxssfilter = true
+    frameDeny = true
+    browserXSSFilter = true
     contentTypeNosniff = true
     stsPreload = true
     stsIncludeSubdomains = true
     stsSeconds = 15552000
     forceSTSHeader = true
 
-    [http.middlewares.midHeaders.headers.customResponseHeaders]
-      X-powered-by = ""
-      Server = ""
-      Content-Security-Policy = "img-src * blob: data: ; child-src 'self' https://www.google.com 'unsafe-inline'; style-src-elem 'self' https://fonts.googleapis.com 'unsafe-inline'; style-src-attr 'self' 'unsafe-inl$      X-Permitted-Cross-Domain-Policies = "Keep-Alive"
-      Referrer-Policy = "strict-origin"
-      Clear-Site-Data = "\"cache\", \"storage\""
-      Cross-Origin-Embedder-Policy = "require-corp"
-      Cross-Origin-Opener-Policy = "same-origin"
-      Croos-Origin-Resource-Policy = "same-origin"
-      Cache-Control = "max-age=3600"
-      Permissions-Policy = "camera=(), microphone=(), geolocation=(), autoplay(), fullscreen(), gyroscope(), interest-cohort(), magnetometer(), payment(), sync-xhr()"
-
   [http.middlewares.midRateLimit]
     [http.middlewares.midRateLimit.rateLimit]
       average = 10
       burst = 10
 
-  [http.middlewares.midRedirectHTTPToHTTPS]
-    [http.middlewares.midRedirectHTTPToHTTPS.redirectScheme]
-      scheme = "https"
-      permanent = true
+  [http.middlewares.midRedirectHTTPToHTTPS.redirectScheme]
+    scheme = "https"
+    permanent = true
 
-  [http.middlewares.midRedirectHTTPSToHTTP]
-    [http.middlewares.midRedirectHTTPSToHTTP.redirectScheme]
-      scheme = "http"
-      permanent = true
+  [http.middlewares.midRedirectHTTPSToHTTP.redirectScheme]
+    scheme = "http"
+    permanent = true
 
 [tls.options]
   [tls.options.default]
-     minVersion = "VersionTLS12"
+    minVersion = "VersionTLS12"
 
   [tls.options.mintls12]
     minVersion = "VersionTLS12"
     cipherSuites = [
-        "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
-        "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
-        "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305",
-        "TLS_AES_128_GCM_SHA256",
-        "TLS_AES_256_GCM_SHA384",
-        "TLS_CHACHA20_POLY1305_SHA256"
+      "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305",
+      "TLS_AES_128_GCM_SHA256",
+      "TLS_AES_256_GCM_SHA384",
+      "TLS_CHACHA20_POLY1305_SHA256"
     ]
-
     sniStrict = true
