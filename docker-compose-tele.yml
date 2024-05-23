@@ -1,0 +1,41 @@
+version: '3'
+services:
+  teleport:
+    image: public.ecr.aws/gravitational/teleport-distroless:15.3.1
+    restart: always
+    container_name: teleport
+    hostname: teste
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=3080"
+      - "traefik.http.routers.teleport.rule=Host(`teleport2.beansoftwares.com.br`)"
+      - "traefik.http.routers.teleport.entrypoints=websecure"
+      - "traefik.http.routers.teleport.tls=true"
+      - "traefik.http.routers.teleport.tls.certresolver=lets-encrypt"
+      - "traefik.http.services.teleport.loadbalancer.server.port=3080"
+    ports:
+      - "3023:3023"
+      - "3024:3024"
+      - "3025:3025"
+      - "3080:3080"
+    volumes:
+      - ./config:/etc/teleport
+      - ./teleport.yaml:/etc/teleport/teleport.yaml
+      - ./data:/var/lib/teleport
+    networks:
+      - teleport-net
+      - traefik-proxy
+
+  ssh_server:
+    build: .
+    ports:
+      - "2222:22"
+    container_name: ssh_server
+    networks:
+      - teleport-net
+
+networks:
+  traefik-proxy:
+    external: true
+  teleport-net:
+    driver: bridge

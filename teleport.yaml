@@ -1,28 +1,31 @@
 teleport:
-    data_dir: /var/lib/teleport
-    log:
-        output: stderr
-        severity: INFO
-        format:
-            output: text
-    ca_pin: []
-    diag_addr: ""
+  nodename: "teste"
+  data_dir: /var/lib/teleport
+  log:
+    output: stderr
+    severity: DEBUG
+    format:
+      output: text
+  ca_pin: []
+  diag_addr: ""
+
 auth_service:
-    enabled: "yes"
-    listen_addr: 0.0.0.0:3025
-    tokens:
-        - "proxy,node:rawkode-academy"
+  enabled: "yes"
+  listen_addr: 0.0.0.0:3025
+  proxy_listener_mode: multiplex
+
 ssh_service:
-    enabled: "yes"
-    labels:
-        env: example
-    commands: 
-        - name: hostname
-          command: [hostname]
-          period: 1m0s
+  enabled: "yes"
+  listen_addr: 0.0.0.0:3022
+
 proxy_service:
-    enabled: "yes"
-    listen_addr: 0.0.0.0:3023
-    public_addr: teleport.beansoftwares.com.br:3080
-    https_keypairs: []
-    acme: {}
+  enabled: "yes"
+  listen_addr: 0.0.0.0:3023
+  tunnel_listen_addr: 0.0.0.0:3024
+  web_listen_addr: 0.0.0.0:3080
+  public_addr: ['teleport2.beansoftwares.com.br:443']
+  https_keypairs: []
+  https_keypairs_reload_interval: 0s
+
+kubernetes_service:
+  enabled: "no"

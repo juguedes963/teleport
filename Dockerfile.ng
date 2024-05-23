@@ -1,0 +1,7 @@
+FROM traefik:2.9.5
+
+COPY ./*.toml ./
+RUN touch acme.json && chmod 600 acme.json
+
+EXPOSE 80
+EXPOSE 443

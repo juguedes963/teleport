@@ -1,0 +1,65 @@
+version: '3'
+services:
+  teleport:
+    image: public.ecr.aws/gravitational/teleport-distroless:15.3.1
+    container_name: teleport
+    hostname: teste
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=3080"
+      - "traefik.http.routers.teleport.tls=true"
+      - "traefik.http.routers.teleport.rule=Host(`teleport2.beansoftwares.com.br`)"
+      - "traefik.http.routers.teleport.tls.certresolver=lets-encrypt"
+      - "traefik.http.services.teleport.loadbalancer.server.port=3080"
+      - "traefik.http.services.teleport.loadbalancer.server.scheme=https"
+    ports:
+      - "3023:3023"
+      - "3025:3025"
+      - "3080:3080"
+    volumes:
+      - ./config:/etc/teleport
+      - ./teleport.yaml:/etc/teleport/teleport.yaml
+      - ./data:/var/lib/teleport
+    networks:
+      - teleport-net
+      - proxy
+      
+  ssh_server:
+    build: .
+    ports:
+      - "2222:22"
+    container_name: ssh_server
+  
+  reverse-proxy:
+    image: traefik:v2.5 # Usar a versão do Traefik adequada
+    container_name: reverse-proxy
+    restart: always
+    command:
+     - "--api.dashboard=true"
+     - "--api.insecure=false" # Tornar o dashboard seguro
+     - "--providers.docker=true"
+     - "--providers.docker.network=proxy"
+     - "--entrypoints.web.address=:80"
+     - "--entrypoints.websecure.address=:443"
+     - "--certificatesresolvers.lets-encrypt.acme.httpChallenge.entryPoint=web"
+     - "--certificatesresolvers.lets-encrypt.acme.email=letsencrypt@beansoftwares.com.br"
+     - "--certificatesresolvers.lets-encrypt.acme.storage=/letsencrypt/acme.json"
+     - "--log.level=INFO" # Definir o nível de log
+     - "--accesslog=true" # Ativar log de acessos
+     - "--entrypoints.websecure.http.tls=true"
+     - "--serversTransport.insecureSkipVerify=true" 
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./letsencrypt:/letsencrypt
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+  teleport-net:
+    driver: bridge
